@@ -1,2 +1,2 @@
 # narcissus
-Mirrormaker deployment
+Experimenting with Mirrormaker deployment to IRIS resources.

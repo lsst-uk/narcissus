@@ -1,0 +1,43 @@
+set up hosts.yaml
+
+$ cat hosts.yaml 
+all:
+        children:
+                zookeepers:
+                        hosts:
+                                zookeeper0:
+                                zookeeper1:
+                        vars:
+                                ansible_python_interpreter: /usr/bin/python3
+
+$ cat 00_ping.yaml 
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+
+    - name: "Check we can connect"
+      ping:
+
+    - name: "Check we can use sudo"
+      become: true
+      ping:
+
+$ ansible-playbook -i hosts.yaml 00_ping.yaml 
+
+PLAY [all] ****************************************************************************************************************************************************************************************************
+
+TASK [Check we can connect] ***********************************************************************************************************************************************************************************
+ok: [zookeeper1]
+ok: [zookeeper0]
+
+TASK [Check we can use sudo] **********************************************************************************************************************************************************************************
+ok: [zookeeper1]
+ok: [zookeeper0]
+
+PLAY RECAP ****************************************************************************************************************************************************************************************************
+zookeeper0                 : ok=2    changed=0    unreachable=0    failed=0   
+zookeeper1                 : ok=2    changed=0    unreachable=0    failed=0   
+
+

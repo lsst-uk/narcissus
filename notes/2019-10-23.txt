@@ -1,0 +1,9 @@
+Create VMs
+
+kafka-admin: 1VCPU/1GB/20GB
+zookeeper0/1: 1VCPU/2GB/20GB
+
+update/upgrade
+add ssh key to admin
+apt-get install ansible
+

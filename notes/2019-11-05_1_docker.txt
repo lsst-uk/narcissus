@@ -1,0 +1,29 @@
+Install docker on zookeepers
+
+$ cat 01_docker.yaml 
+---
+- hosts: zookeepers
+  gather_facts: false
+
+  tasks:
+
+    - name: "Install Docker"
+      become: true
+      apt:
+              pkg:
+                      - docker.io 
+                      - docker-compose
+              state: present
+              update-cache: yes
+
+$ ansible-playbook -i hosts.yaml 01_docker.yaml -l zookeeper0
+
+PLAY [zookeepers] *********************************************************************************************************************************************************************************************
+
+TASK [Install Docker] *****************************************************************************************************************************************************************************************
+changed: [zookeeper0]
+
+PLAY RECAP ****************************************************************************************************************************************************************************************************
+zookeeper0                 : ok=1    changed=1    unreachable=0    failed=0   
+
+

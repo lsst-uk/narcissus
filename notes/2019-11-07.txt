@@ -1,0 +1,6 @@
+add kafka hosts
+add kafka config
+docker containers don't pick up host /etc/hosts entries by default -> kafkas can't see zookeepers
+host mode networking gets further -> can see zookeeper, but zookeeper closes connection
+switching zookeepers to host mode network appears to fix this
+

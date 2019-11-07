@@ -1,0 +1,30 @@
+---
+- hosts: kafkas
+  gather_facts: false
+  become: true
+
+  vars:
+     num_partitions: "{{ 4 * 4 * 16 }}"
+     retention_ms: "{{ 7 * 24 * 60 * 60 * 1000 }}"
+     retention_bytes: "{{ -1 }}"
+
+  tasks:
+
+    - name: "Deploy our Kafka compose file"
+      template:
+        src:  kafka/kafka-compose.yaml.j2
+        dest: kafka-compose.yml
+      vars:
+        mntpath: '/kafka'
+        logpath: '/kafka'
+
+    - name: "Start our Kafka services"
+      docker_compose:
+        project_src:
+            '.'
+        files:
+          - kafka-compose.yml
+        services:
+          - kafka
+        state:
+          present

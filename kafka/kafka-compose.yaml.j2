@@ -1,0 +1,33 @@
+version: "3.2"
+
+services:
+
+    kafka:
+        image:
+            "confluentinc/cp-kafka:4.1.1"
+        restart:
+            "no"
+        ports:
+            - "9092:9092"
+            - "9093:9093"
+        extra_hosts:
+            - "{{ inventory_hostname }}:127.0.0.2"
+        environment:
+            - "KAFKA_LISTENERS=jasminum://0.0.0.0:9092"
+            - "KAFKA_ADVERTISED_LISTENERS=jasminum://{{ inventory_hostname }}:9092"
+            - "KAFKA_INTER_BROKER_LISTENER_NAME=jasminum"
+            - "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=jasminum:PLAINTEXT"
+            - "KAFKA_LOG_DIRS={{ logpath }}"
+            - "KAFKA_BROKER_ID={{ groups['kafkas'].index(inventory_hostname) + 1 }}"
+            - "KAFKA_BROKER_RACK={{ groups['kafkas'].index(inventory_hostname) + 1 }}"
+            - "KAFKA_ZOOKEEPER_CONNECT={{ groups['zookeepers'] | join(',') }}"
+            - "KAFKA_NUM_PARTITIONS={{ num_partitions }}"
+            - "KAFKA_DEFAULT_REPLICATION_FACTOR=3"
+            - "KAFKA_LOG_RETENTION_MS={{ retention_ms }}"
+            - "KAFKA_LOG_RETENTION_BYTES={{ retention_bytes }}"
+            - "KAFKA_AUTO_CREATE_TOPICS_ENABLE=true"
+            - "KAFKA_MESSAGE_MAX_BYTES=10485760"
+        volumes:
+            - type:   "bind"
+              source: "{{ mntpath }}"
+              target: "{{ logpath }}"

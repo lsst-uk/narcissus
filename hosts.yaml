@@ -1,9 +1,13 @@
 all:
+        vars:
+                ansible_python_interpreter: /usr/bin/python3
         children:
                 zookeepers:
                         hosts:
                                 zookeeper0:
                                 zookeeper1:
-                        vars:
-                                ansible_python_interpreter: /usr/bin/python3
-
+                kafkas:
+                        hosts:
+                                kafka0:
+                                kafka1:
+                                kafka2:

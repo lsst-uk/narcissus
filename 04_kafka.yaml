@@ -9,7 +9,6 @@
      retention_bytes: "{{ -1 }}"
 
   tasks:
-
     - name: "Deploy our Kafka compose file"
       template:
         src:  kafka/kafka-compose.yaml.j2
@@ -19,7 +18,7 @@
         logpath: '/kafka'
 
     - name: "Start our Kafka services"
-      docker_compose:
+      docker_service:
         project_src:
             '.'
         files:

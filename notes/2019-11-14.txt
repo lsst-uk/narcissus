@@ -1,2 +1,6 @@
 add mirror hosts
+update /etc/hosts on all
+deploy docker to mirrors
+create mirror config
+deploy mirrors
 

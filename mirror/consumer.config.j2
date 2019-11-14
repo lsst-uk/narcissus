@@ -1,0 +1,9 @@
+group.id={{ group_id }}
+bootstrap.servers={{ source }}
+security.protocol=PLAINTEXT
+
+auto.offset.reset=earliest
+exclude.internal.topics=true
+
+partition.assignment.strategy=org.apache.kafka.clients.consumer.RoundRobinAssignor
+session.timeout.ms=60000

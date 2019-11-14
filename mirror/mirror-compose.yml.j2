@@ -1,0 +1,25 @@
+version: "3.2"
+
+services:
+
+    mirrormaker:
+
+        image:
+            atolmis/kafka
+        network_mode: host
+        volumes:
+            - /etc/mirror/producer.config:/etc/mirror/producer.config
+            - /etc/mirror/consumer.config:/etc/mirror/consumer.config
+        environment:
+                KAFKA_HEAP_OPTS: -Xmx1G
+        command: [
+             "bin/kafka-mirror-maker.sh",
+             "--num.streams",
+             "{{ numstreams }}",
+             "--consumer.config",
+             "/etc/mirror/consumer.config",
+             "--producer.config",
+             "/etc/mirror/producer.config",
+             "--whitelist",
+             "{{ topiclist | join(',') }}"
+             ]

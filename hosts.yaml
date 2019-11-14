@@ -11,3 +11,7 @@ all:
                                 kafka0:
                                 kafka1:
                                 kafka2:
+                mirrors:
+                        hosts:
+                                mirror0:
+                                mirror1:

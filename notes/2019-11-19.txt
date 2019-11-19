@@ -1,0 +1,4 @@
+moving to ROE cloud
+combine mirrors and zookeepers to economise on VMs
+change naming convention to match openstack for deploying multiple hosts
+stick with 2 brokers for now to conserve IPs

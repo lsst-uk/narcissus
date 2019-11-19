@@ -4,14 +4,13 @@ all:
         children:
                 zookeepers:
                         hosts:
-                                zookeeper0:
-                                zookeeper1:
-                kafkas:
-                        hosts:
-                                kafka0:
-                                kafka1:
-                                kafka2:
+                                mirror-1:
+                                mirror-2:
                 mirrors:
                         hosts:
-                                mirror0:
-                                mirror1:
+                                mirror-1:
+                                mirror-2:
+                kafkas:
+                        hosts:
+                                kafka-1:
+                                kafka-2:

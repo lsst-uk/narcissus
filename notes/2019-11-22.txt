@@ -1,0 +1,4 @@
+deploy zookeepers
+update kafka config for separate internal/external listeners
+deploy kafka
+

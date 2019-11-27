@@ -1,0 +1,2 @@
+update kafka brokers to use separate internal/external interfaces on ports 29092/9092
+

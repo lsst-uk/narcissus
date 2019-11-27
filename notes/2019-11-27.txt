@@ -1,0 +1,4 @@
+set up mirrormakers
+need to set KAFKA_DEFAULT_REPLICATION_FACTOR and KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=2 <= n brokers (2 in this case)
+probably need to tear everything down and recreate if/when changing this
+

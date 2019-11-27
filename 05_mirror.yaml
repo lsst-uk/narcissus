@@ -6,15 +6,15 @@
   vars:
     numstreams: 2
     source: "public.alerts.ztf.uw.edu:9092"
-    group_id: "dev0.ztf-mirror.roe.ac.uk"
-    target: "{{ groups['kafkas'] | join(':9092,') }}:9092"
+    group_id: "dev1.ztf-mirror.roe.ac.uk"
+    target: "{{ groups['kafkas'] | join(':29092,') }}:29092"
 #   topicdate:  "{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}"
 #   topiclist: [
 #       "ztf_{{ topicdate }}_programid1",
 #       "ztf_{{ topicdate }}_programid3_public"
 #       ]
     topiclist: [
-        "ztf_20191110_programid1"
+        "ztf_20191126_programid1"
         ]
 
   tasks:

@@ -4,11 +4,22 @@
   become: true
 
   vars:
-     num_partitions: "{{ 4 * 4 * 16 }}"
+     domain: "epicyclist.uk"
+     num_partitions: "{{ 16 }}"
      retention_ms: "{{ 7 * 24 * 60 * 60 * 1000 }}"
      retention_bytes: "{{ -1 }}"
 
   tasks:
+    - name: "Create data fs"
+      filesystem:
+        fstype: xfs
+        dev: /dev/vdb
+    - name: "Mount data fs"
+      mount:
+        path: /kafka
+        src: /dev/vdb
+        fstype: xfs
+        state: mounted
     - name: "Deploy our Kafka compose file"
       template:
         src:  kafka/kafka-compose.yaml.j2

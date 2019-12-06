@@ -1,0 +1,43 @@
+---
+- hosts: monitor
+  gather_facts: false
+  become: true
+
+  tasks:
+
+    - name: "Install prometheus"
+      apt:
+              pkg:
+                      - prometheus
+              state: present
+              update-cache: yes
+
+- hosts: zookeepers:kafkas:mirrors
+  gather_facts: false
+  become: true
+
+  tasks:
+
+    - name: "Create JMX exporter directories"
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - /opt/jmx_exporter
+        - /etc/jmx_exporter
+
+    - name: "Get JMX exporter jar"
+      get_url:
+        url: https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.3.0/jmx_prometheus_javaagent-0.3.0.jar
+        dest: /opt/jmx_exporter/jmx_prometheus_javaagent.jar
+        mode: '0644'
+
+    - name: "JMX exporter config files"
+      copy:
+        src: "prometheus/{{ item }}.yml"
+        dest: "/etc/jmx_exporter/{{ item }}.yml"
+      with_items:
+        - zookeeper
+        - kafka
+        - mirrormaker
+

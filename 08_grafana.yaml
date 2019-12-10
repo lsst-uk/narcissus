@@ -16,10 +16,11 @@
         url: https://packages.grafana.com/gpg.key
         state: present
 
-    - name: "Install Grafana"
+    - name: "Install Packages"
       apt:
         pkg:
           - grafana
+          - nginx
         state: present
         update-cache: yes
 
@@ -37,4 +38,19 @@
 
     - debug: var=output.stdout_lines
 
+    - name: "Create Nginx config file"
+      copy:
+        src: grafana/nginx.conf
+        dest: /etc/nginx/sites-available/grafana
+
+    - name: "Enable Nginx config"
+      file:
+        src: /etc/nginx/sites-available/grafana
+        dest: /etc/nginx/sites-enabled/grafana
+        state: link
+    
+    - name: "Disable default Nginx config"
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
 

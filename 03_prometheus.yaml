@@ -5,12 +5,17 @@
 
   tasks:
 
-    - name: "Install prometheus"
+    - name: "Install Prometheus"
       apt:
               pkg:
                       - prometheus
               state: present
               update-cache: yes
+
+    - name: "Configure Prometheus"
+      copy:
+        src: prometheus/prometheus.yml
+        dest: /etc/prometheus/prometheus.yml
 
 - hosts: zookeepers:kafkas:mirrors
   gather_facts: false
@@ -18,13 +23,17 @@
 
   tasks:
 
+    - name: "Install Prometheus node exporter"
+      apt:
+              pkg:
+                      - prometheus-node-exporter
+              state: present
+              update-cache: yes
+
     - name: "Create JMX exporter directories"
       file:
-        path: "{{ item }}"
+        path: /opt/jmx_exporter
         state: directory
-      with_items:
-        - /opt/jmx_exporter
-        - /etc/jmx_exporter
 
     - name: "Get JMX exporter jar"
       get_url:
@@ -35,7 +44,7 @@
     - name: "JMX exporter config files"
       copy:
         src: "prometheus/{{ item }}.yml"
-        dest: "/etc/jmx_exporter/{{ item }}.yml"
+        dest: "/opt/jmx_exporter/{{ item }}.yml"
       with_items:
         - zookeeper
         - kafka

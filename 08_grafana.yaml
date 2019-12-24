@@ -3,6 +3,10 @@
   gather_facts: false
   become: true
 
+  vars:
+    domain: "ztf-alert-monitor.lsst.ac.uk"
+    email: "g.francis@epcc.ed.ac.uk"
+
   tasks:
 
     - name: "Add Grafana repo"
@@ -21,8 +25,30 @@
         pkg:
           - grafana
           - nginx
+          - software-properties-common
         state: present
         update-cache: yes
+
+    - name: "Add Certbot PPA"
+      apt_repository:
+        repo: ppa:certbot/certbot
+        state: present
+
+    - name: "Install Certbot"
+      apt:
+        pkg:
+          - certbot
+          - python-certbot-nginx
+        state: present
+        update-cache: yes
+
+    - name: "Get certificate"
+      command: "certbot certonly --standalone -m {{ email }} -d {{ domain }} --agree-tos"
+      register: certoutput
+      args:
+        creates: /etc/letsencrypt/live/ztf-alert-monitor.lsst.ac.uk
+
+    - debug: var=certoutput.stdout_lines
 
     - name: "Enable Grafana service"
       service:

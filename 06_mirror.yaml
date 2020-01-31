@@ -4,9 +4,9 @@
   become: true
 
   vars:
-    numstreams: 2
+    numstreams: 7
     source: "public.alerts.ztf.uw.edu:9092"
-    group_id: "dev1.ztf-mirror.roe.ac.uk"
+    group_id: "dev3.ztf-mirror.roe.ac.uk"
     target: "{{ groups['kafkas'] | join(':29092,') }}:29092"
 #   topicdate:  "{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}"
 #   topiclist: [
@@ -14,7 +14,7 @@
 #       "ztf_{{ topicdate }}_programid3_public"
 #       ]
     topiclist: [
-        "ztf_20191126_programid1"
+        "topicname"
         ]
 
   tasks:
@@ -41,6 +41,7 @@
 
     - name: "Start our MirrorMaker services"
       docker_service:
+        project_name: mirrormaker
         project_src:
             '.'
         files:

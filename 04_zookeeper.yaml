@@ -11,6 +11,7 @@
 
     - name: "Start our Zookeeper services"
       docker_service:
+        project_name: zookeeper
         project_src:
             '.'
         files:

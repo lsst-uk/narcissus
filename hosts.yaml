@@ -10,8 +10,9 @@ all:
                                 localhost:
                 zookeepers:
                         hosts:
-                                mirror-1:
-                                mirror-2:
+                                kafka-1:
+                                kafka-2:
+                                kafka-3:
                 mirrors:
                         hosts:
                                 mirror-1:

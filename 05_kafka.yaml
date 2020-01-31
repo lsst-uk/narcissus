@@ -20,13 +20,17 @@
         src: /dev/vdb
         fstype: xfs
         state: mounted
+    - name: "Create data dir"
+      file:
+        path: /kafka/data
+        state: directory
     - name: "Deploy our Kafka compose file"
       template:
         src:  kafka/kafka-compose.yaml.j2
         dest: kafka-compose.yml
       vars:
-        mntpath: '/kafka'
-        logpath: '/kafka'
+        mntpath: '/kafka/data'
+        logpath: '/kafka/data'
 
     - name: "Start our Kafka services"
       docker_service:

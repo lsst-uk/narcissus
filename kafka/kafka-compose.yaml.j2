@@ -4,7 +4,8 @@ services:
 
     kafka:
         image:
-            "confluentinc/cp-kafka:4.1.1"
+#            "confluentinc/cp-kafka:4.1.1"
+            "confluentinc/cp-kafka:5.4.0"
         network_mode: host
         restart:
             "no"
@@ -24,7 +25,7 @@ services:
             - "KAFKA_AUTO_CREATE_TOPICS_ENABLE=true"
             - "KAFKA_MESSAGE_MAX_BYTES=10485760"
             - "KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=2"
-            - "KAFKA_OPTS=-javaagent:/opt/jmx_exporter/jmx_prometheus_javaagent.jar=0.0.0.0:8080:/opt/jmx_exporter/kafka.yml"
+            - "KAFKA_OPTS=-javaagent:/opt/jmx_exporter/jmx_prometheus_javaagent.jar=0.0.0.0:8083:/opt/jmx_exporter/kafka.yml"
         volumes:
             - /opt/jmx_exporter:/opt/jmx_exporter
             - type:   "bind"

@@ -1,4 +1,6 @@
 bootstrap.servers={{ target }}
 security.protocol=PLAINTEXT
 
-acks=all
+acks=1
+linger.ms=1000
+batch.size=1048576

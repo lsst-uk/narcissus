@@ -3,6 +3,7 @@
     - zookeepers
     - kafkas
     - mirrors
+    - clients
   gather_facts: false
   become: true
 

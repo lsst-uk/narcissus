@@ -1,7 +1,7 @@
 #!/bin/bash
 # Update our topic names.
 topiclist=(
-    "ztf_$(date -d '2 days ago' +%Y%m%d)_programid1"
+    "ztf_$(date -d '5 days ago' +%Y%m%d)_programid1"
     "ztf_$(date -d yesterday +%Y%m%d)_programid1"
     "ztf_$(date -d today +%Y%m%d)_programid1"
     )
@@ -15,6 +15,7 @@ topicstr=${topicstr// /,}
 # Stop the MirrorMaker process.
 sudo docker-compose \
     --file "${HOME}/mirror-compose.yml" \
+    -p mirrormaker \
     down
 
 #
@@ -31,5 +32,6 @@ sed -E -i '
 # Start the MirrorMaker process.
 sudo docker-compose \
     --file "${HOME}/mirror-compose.yml" \
+    -p mirrormaker \
     up --detach \
         mirrormaker

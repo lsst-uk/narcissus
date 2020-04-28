@@ -19,6 +19,7 @@
         path: /kafka
         src: /dev/vdb
         fstype: xfs
+        opts: nofail
         state: mounted
     - name: "Create data dir"
       file:

@@ -33,6 +33,6 @@
     cron:
       name:   "Update topics"
       user:   "{{ansible_env.USER}}"
-      minute: '28'
+      minute: '18'
       hour:   '0'
       job:    "{{ansible_env.HOME}}/bin/update-topic.sh"

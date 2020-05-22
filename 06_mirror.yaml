@@ -6,7 +6,8 @@
   vars:
     numstreams: 7
     source: "public.alerts.ztf.uw.edu:9092"
-    group_id: "dev3.ztf-mirror.roe.ac.uk"
+    group_id: "dev4.ztf-mirror.roe.ac.uk"
+    client_id: "{{ inventory_hostname_short }}.ztf-mirror.roe.ac.uk"
     target: "{{ groups['kafkas'] | join(':29092,') }}:29092"
 #   topicdate:  "{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}"
 #   topiclist: [

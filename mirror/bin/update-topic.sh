@@ -1,8 +1,8 @@
 #!/bin/bash
 # Update our topic names.
 topiclist=(
-    "ztf_$(date -d '5 days ago' +%Y%m%d)_programid1"
-    "ztf_$(date -d yesterday +%Y%m%d)_programid1"
+    #"ztf_$(date -d '2 days ago' +%Y%m%d)_programid1"
+    #"ztf_$(date -d yesterday +%Y%m%d)_programid1"
     "ztf_$(date -d today +%Y%m%d)_programid1"
     )
 

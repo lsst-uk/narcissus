@@ -8,23 +8,31 @@
      num_partitions: "{{ 16 }}"
      retention_ms: "{{ 7 * 24 * 60 * 60 * 1000 }}"
      retention_bytes: "{{ -1 }}"
+     data_fs:
+       - { dev: "/dev/vdb", path: "/kafka/data" }
+       - { dev: "/dev/vdc", path: "/kafka/data2" }
+
+
 
   tasks:
-    - name: "Create data fs"
+    - name: "Create data filesystems"
       filesystem:
         fstype: xfs
-        dev: /dev/vdb
-    - name: "Mount data fs"
+        dev: "{{ item.dev }}"
+      with_items: "{{ data_fs }}"
+    - name: "Create data mountpoints"
+      file:
+        path: "{{ item.path }}"
+        state: directory
+      with_items: "{{ data_fs }}"
+    - name: "Mount data filesystems"
       mount:
-        path: /kafka
-        src: /dev/vdb
+        path: "{{ item.path }}"
+        src: "{{ item.dev }}"
         fstype: xfs
         opts: nofail
         state: mounted
-    - name: "Create data dir"
-      file:
-        path: /kafka/data
-        state: directory
+      with_items: "{{ data_fs }}"
     - name: "Deploy our Kafka compose file"
       template:
         src:  kafka/kafka-compose.yaml.j2
@@ -32,6 +40,8 @@
       vars:
         mntpath: '/kafka/data'
         logpath: '/kafka/data'
+        mntpath2: '/kafka/data2'
+        logpath2: '/kafka/data2'
 
     - name: "Start our Kafka services"
       docker_service:

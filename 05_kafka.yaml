@@ -43,6 +43,12 @@
         mntpath2: '/kafka/data2'
         logpath2: '/kafka/data2'
 
+    - name: "JAAS config file"
+      copy:
+        src: "kafka/kafka_server_jaas.conf"
+        dest: "/etc/kafka_server_jaas.conf"
+
+
     - name: "Start our Kafka services"
       docker_service:
         project_src:

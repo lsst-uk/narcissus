@@ -1,0 +1,41 @@
+---
+- hosts: public_kafkas
+  gather_facts: false
+  become: true
+
+  vars:
+     domain: "lsst.ac.uk"
+     num_partitions: "{{ 4 }}"
+     retention_ms: "{{ 7 * 24 * 60 * 60 * 1000 }}"
+     retention_bytes: "{{ -1 }}"
+     data_paths:
+       - { path: "/kafka/data" }
+
+  tasks:
+    - name: "Create data paths"
+      file:
+        path: "{{ item.path }}"
+        state: directory
+      with_items: "{{ data_paths }}"
+    - name: "Deploy our Kafka compose file"
+      template:
+        src:  kafka/kafka-public-compose.yaml.j2
+        dest: kafka-compose.yml
+      vars:
+        logpath: '/kafka/data'
+
+    - name: "JAAS config file"
+      copy:
+        src: "kafka/kafka_server_jaas.conf"
+        dest: "/etc/kafka_server_jaas.conf"
+
+    - name: "Start our Kafka services"
+      docker_service:
+        project_src:
+            '.'
+        files:
+          - kafka-compose.yml
+        services:
+          - kafka
+        state:
+          present

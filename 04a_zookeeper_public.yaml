@@ -1,0 +1,25 @@
+---
+- hosts: zookeepers
+  gather_facts: false
+  become: true
+
+  vars:
+    use_jmx: false
+
+  tasks:
+    - name: "Deploy our Zookeeper compose file"
+      template:
+        src:  zookeeper/zookeeper-compose.yml.j2
+        dest: zookeeper-compose.yml
+
+    - name: "Start our Zookeeper services"
+      docker_service:
+        project_name: zookeeper
+        project_src:
+            '.'
+        files:
+          - zookeeper-compose.yml
+        services:
+          - zookeep
+        state:
+          present

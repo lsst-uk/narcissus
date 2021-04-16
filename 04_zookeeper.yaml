@@ -3,6 +3,9 @@
   gather_facts: false
   become: true
 
+  vars:
+    use_jmx: true
+
   tasks:
     - name: "Deploy our Zookeeper compose file"
       template:

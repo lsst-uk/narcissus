@@ -1,0 +1,123 @@
+Setting up a public Kafka server
+
+1) Create DNS A record for kafka.lsst.ac.uk -> 130.246.213.199
+
+2) Create new VM and assign floating IP
+
+3) Log in and do updates, install docker, etc.
+
+4) ensure ssh to localhost works
+ubuntu@kafka-pub:~$ ssh-keygen 
+ubuntu@kafka-pub:~$ cat .ssh/id_rsa.pub >> .ssh/authorized_keys 
+
+5) install prerequisites
+ubuntu@kafka-pub:~$ sudo apt-get install ansible default-jdk-headless kafkacat
+ubuntu@kafka-pub:~$ curl -O http://packages.confluent.io/archive/6.1/confluent-community-6.1.1.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  326M  100  326M    0     0  19.4M      0  0:00:16  0:00:16 --:--:-- 21.0M
+ubuntu@kafka-pub:~$ tar -zxf confluent-community-6.1.1.tar.gz 
+
+
+6) clone narcissus
+ubuntu@kafka-pub:~$ git clone https://github.com/lsst-uk/narcissus.git
+
+7) edit hosts file
+ubuntu@kafka-pub:~/narcissus$ cat hosts-kafka-pub.yaml 
+all:
+        vars:
+                ansible_python_interpreter: /usr/bin/python3
+        children:
+                zookeepers:
+                        hosts:
+                                localhost:
+                public_kafkas:
+                        hosts:
+                                localhost:
+8) start zookeeper
+ubuntu@kafka-pub:~/narcissus$ ansible-playbook -i hosts-kafka-pub.yaml 00_ping.yaml 
+
+PLAY [all] *********************************************************************************
+
+TASK [Check we can connect] ****************************************************************
+ok: [localhost]
+
+TASK [Check we can use sudo] ***************************************************************
+ok: [localhost]
+
+PLAY RECAP *********************************************************************************
+localhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+ubuntu@kafka-pub:~/narcissus$ ansible-playbook -i hosts-kafka-pub.yaml 02_docker.yaml 
+[WARNING]: Could not match supplied host pattern, ignoring: kafkas
+[WARNING]: Could not match supplied host pattern, ignoring: mirrors
+[WARNING]: Could not match supplied host pattern, ignoring: clients
+
+PLAY [zookeepers,kafkas,mirrors,clients] ***************************************************
+
+TASK [Install Docker] **********************************************************************
+changed: [localhost]
+
+TASK [Install pip] *************************************************************************
+changed: [localhost]
+
+TASK [Install docker python modules] *******************************************************
+ok: [localhost]
+
+PLAY RECAP *********************************************************************************
+localhost                  : ok=3    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+ubuntu@kafka-pub:~/narcissus$ ansible-playbook -i hosts-kafka-pub.yaml 04a_zookeeper_public.yaml 
+
+PLAY [zookeepers] ********************************************************************************************
+
+TASK [Deploy our Zookeeper compose file] ********************************************************************************************
+changed: [localhost]
+
+TASK [Start our Zookeeper services] ********************************************************
+[DEPRECATION WARNING]: The 'docker_service' module has been renamed to 'docker_compose'.. This feature will be removed in version 2.12. Deprecation warnings can be disabled by setting 
+deprecation_warnings=False in ansible.cfg.
+changed: [localhost]
+
+PLAY RECAP *********************************************************************************
+localhost                  : ok=2    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+9) set the admin password
+
+ubuntu@kafka-pub:~$ confluent-6.1.1/bin/kafka-configs --zookeeper localhost:2181 --alter --add-config 'SCRAM-SHA-256=[password=g3j8srri6b9]' --entity-type users --entity-name admin
+Warning: --zookeeper is deprecated and will be removed in a future version of Kafka.
+Use --bootstrap-server instead to specify a broker to connect to.
+Completed updating config for entity: user-principal 'admin'.
+
+10) start Kafka
+
+ubuntu@kafka-pub:~/narcissus$ ansible-playbook -i hosts-kafka-pub.yaml 05a_kafka_public.yaml 
+
+PLAY [public_kafkas] **********************************************************************************************************************************************************************************
+
+TASK [Create data paths] ******************************************************************************************************************************************************************************
+ok: [localhost] => (item={'path': '/kafka/data'})
+
+TASK [Deploy our Kafka compose file] ******************************************************************************************************************************************************************
+ok: [localhost]
+
+TASK [JAAS config file] *******************************************************************************************************************************************************************************
+ok: [localhost]
+
+TASK [Start our Kafka services] ***********************************************************************************************************************************************************************
+[DEPRECATION WARNING]: The 'docker_service' module has been renamed to 'docker_compose'.. This feature will be removed in version 2.12. Deprecation warnings can be disabled by setting 
+deprecation_warnings=False in ansible.cfg.
+ok: [localhost]
+
+PLAY RECAP ********************************************************************************************************************************************************************************************
+localhost                  : ok=4    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+ubuntu@kafka-pub:~/narcissus$ kafkacat -b kafka.lsst.ac.uk:80 -L
+Metadata for all topics (from broker 1001: kafka.lsst.ac.uk:80/1001):
+ 1 brokers:
+  broker 1001 at kafka.lsst.ac.uk:80 (controller)
+ 0 topics:
+ubuntu@kafka-pub:~/narcissus$ kafkacat -b localhost:9092 -L
+% ERROR: Failed to acquire metadata: Local: Timed out
+
+

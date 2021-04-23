@@ -112,12 +112,68 @@ ok: [localhost]
 PLAY RECAP ********************************************************************************************************************************************************************************************
 localhost                  : ok=4    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 
-ubuntu@kafka-pub:~/narcissus$ kafkacat -b kafka.lsst.ac.uk:80 -L
+11) set ACLs to allow global read access to topics starting with lsst_
+ubuntu@kafka-pub:~$ confluent-6.1.1/bin/kafka-acls --bootstrap-server localhost:9092 --command-config client.properties --add --allow-principal User:'*' --allow-host '*' --operation Read --topic 'lsst_' --resource-pattern-type prefixed
+[2021-04-23 09:31:11,386] WARN The configuration 'sasl.jaas.config' was supplied but isn't a known config. (org.apache.kafka.clients.admin.AdminClientConfig)
+Adding ACLs for resource `ResourcePattern(resourceType=TOPIC, name=lsst_, patternType=PREFIXED)`: 
+ 	(principal=User:*, host=*, operation=READ, permissionType=ALLOW) 
+
+Current ACLs for resource `ResourcePattern(resourceType=TOPIC, name=lsst_, patternType=PREFIXED)`: 
+ 	(principal=User:*, host=*, operation=READ, permissionType=ALLOW) 
+
+12 ) testing
+ubuntu@kafka-pub:~$ kafkacat -b localhost:9092 -X security.protocol=SASL_PLAINTEXT -X sasl.mechanisms=SCRAM-SHA-256 -X sasl.username=admin -X sasl.password=g3j8srri6b9 -P -t lsst_test
+foo
+bar
+baz
+ubuntu@kafka-pub:~$ kafkacat -b localhost:9092 -X security.protocol=SASL_PLAINTEXT -X sasl.mechanisms=SCRAM-SHA-256 -X sasl.username=admin -X sasl.password=g3j8srri6b9 -C -t lsst_test -o beginning -e
+% Reached end of topic lsst_test [0] at offset 0
+% Reached end of topic lsst_test [1] at offset 0
+% Reached end of topic lsst_test [2] at offset 0
+foo
+bar
+baz
+% Reached end of topic lsst_test [3] at offset 3: exiting
+ubuntu@kafka-pub:~$ kafkacat -b localhost:9092 -X security.protocol=SASL_PLAINTEXT -X sasl.mechanisms=SCRAM-SHA-256 -X sasl.username=admin -X sasl.password=g3j8srri6b9 -L
+Metadata for all topics (from broker 1001: sasl_plaintext://localhost:9092/1001):
+ 1 brokers:
+  broker 1001 at localhost:9092 (controller)
+ 3 topics:
+  topic "__confluent.support.metrics" with 1 partitions:
+    partition 0, leader 1001, replicas: 1001, isrs: 1001
+  topic "test" with 4 partitions:
+    partition 0, leader 1001, replicas: 1001, isrs: 1001
+    partition 1, leader 1001, replicas: 1001, isrs: 1001
+    partition 2, leader 1001, replicas: 1001, isrs: 1001
+    partition 3, leader 1001, replicas: 1001, isrs: 1001
+  topic "lsst_test" with 4 partitions:
+    partition 0, leader 1001, replicas: 1001, isrs: 1001
+    partition 1, leader 1001, replicas: 1001, isrs: 1001
+    partition 2, leader 1001, replicas: 1001, isrs: 1001
+    partition 3, leader 1001, replicas: 1001, isrs: 1001
+ubuntu@kafka-pub:~$ kafkacat -b localhost:9092 -X security.protocol=SASL_PLAINTEXT -X sasl.mechanisms=SCRAM-SHA-256 -X sasl.username=admin -X sasl.password=blah -L
+% ERROR: Failed to acquire metadata: Local: Broker transport failure
+ubuntu@kafka-pub:~$ kafkacat -b kafka.lsst.ac.uk:80 -L
 Metadata for all topics (from broker 1001: kafka.lsst.ac.uk:80/1001):
  1 brokers:
   broker 1001 at kafka.lsst.ac.uk:80 (controller)
- 0 topics:
-ubuntu@kafka-pub:~/narcissus$ kafkacat -b localhost:9092 -L
-% ERROR: Failed to acquire metadata: Local: Timed out
-
+ 1 topics:
+  topic "lsst_test" with 4 partitions:
+    partition 0, leader 1001, replicas: 1001, isrs: 1001
+    partition 1, leader 1001, replicas: 1001, isrs: 1001
+    partition 2, leader 1001, replicas: 1001, isrs: 1001
+    partition 3, leader 1001, replicas: 1001, isrs: 1001
+ubuntu@kafka-pub:~$ kafkacat -b kafka.lsst.ac.uk:80 -t lsst_test -C -o beginning -e
+% Reached end of topic lsst_test [0] at offset 0
+% Reached end of topic lsst_test [1] at offset 0
+% Reached end of topic lsst_test [2] at offset 0
+foo
+bar
+baz
+% Reached end of topic lsst_test [3] at offset 3: exiting
+ubuntu@kafka-pub:~$ kafkacat -b kafka.lsst.ac.uk:80 -t lsst_test -P
+asdf
+% Delivery failed for message: Broker: Topic authorization failed
+ubuntu@kafka-pub:~$ kafkacat -b kafka.lsst.ac.uk:80 -t test -C -o beginning -e
+% ERROR: Topic test error: Broker: Topic authorization failed
 

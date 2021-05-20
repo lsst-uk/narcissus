@@ -120,6 +120,15 @@ Adding ACLs for resource `ResourcePattern(resourceType=TOPIC, name=lsst_, patter
 
 Current ACLs for resource `ResourcePattern(resourceType=TOPIC, name=lsst_, patternType=PREFIXED)`: 
  	(principal=User:*, host=*, operation=READ, permissionType=ALLOW) 
+ubuntu@kafka-pub:~$ confluent-6.1.1/bin/kafka-acls --bootstrap-server localhost:9092 --command-config client.properties --add --allow-principal User:'*' --allow-host '*' --operation Read --group '*'
+[2021-05-20 18:01:08,669] WARN The configuration 'sasl.jaas.config' was supplied but isn't a known config. (org.apache.kafka.clients.admin.AdminClientConfig)
+Adding ACLs for resource `ResourcePattern(resourceType=GROUP, name=*, patternType=LITERAL)`: 
+ 	(principal=User:*, host=*, operation=READ, permissionType=ALLOW) 
+
+Current ACLs for resource `ResourcePattern(resourceType=GROUP, name=*, patternType=LITERAL)`: 
+ 	(principal=User:*, host=*, operation=READ, permissionType=ALLOW) 
+
+Note that there is a potential weakness here in that we are allowing anybody to commit offsets for any group so users can potentially mess with each other if they pick the same group IDs (intentionally or otherwise).
 
 12 ) testing
 ubuntu@kafka-pub:~$ kafkacat -b localhost:9092 -X security.protocol=SASL_PLAINTEXT -X sasl.mechanisms=SCRAM-SHA-256 -X sasl.username=admin -X sasl.password=g3j8srri6b9 -P -t lsst_test

@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+  gather_facts: false
+
+  vars:
+          test: "{{ lookup('hashi_vault', 'secret=secret/lasair/test')}}"
+
+  tasks:
+
+    - name: "Print value"
+      debug:
+        var: test
+
+    - name: "Write test file to /tmp/vault_demo.txt"
+      template:
+        src:  vault_demo.txt.j2
+        dest: /tmp/vault_demo.txt 
+

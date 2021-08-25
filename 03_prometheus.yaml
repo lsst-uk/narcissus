@@ -7,10 +7,11 @@
 
     - name: "Install Prometheus"
       apt:
-              pkg:
-                      - prometheus
-              state: present
-              update-cache: yes
+        pkg:
+          - prometheus
+          - prometheus-blackbox-exporter
+        state: present
+        update-cache: yes
 
     - name: "Configure Prometheus"
       copy:
@@ -25,10 +26,10 @@
 
     - name: "Install Prometheus node exporter"
       apt:
-              pkg:
-                      - prometheus-node-exporter
-              state: present
-              update-cache: yes
+        pkg:
+          - prometheus-node-exporter
+        state: present
+        update-cache: yes
 
     - name: "Create JMX exporter directories"
       file:

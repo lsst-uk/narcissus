@@ -30,9 +30,7 @@ services:
             - "ZOOKEEPER_SYNC_LIMIT=2"
             - "ZOOKEEPER_CLIENT_PORT=2181"
             - "ZOOKEEPER_CLIENT_PORT_ADDRESS=0.0.0.0"
-            {% if use_jmx %}
-            - "KAFKA_OPTS=-javaagent:/opt/jmx_exporter/jmx_prometheus_javaagent.jar=0.0.0.0:8082:/opt/jmx_exporter/zookeeper.yml"
-            {% endif %}
+            - "KAFKA_OPTS=-Dzookeeper.admin.enableServer=false{% if use_jmx %} -javaagent:/opt/jmx_exporter/jmx_prometheus_javaagent.jar=0.0.0.0:8082:/opt/jmx_exporter/zookeeper.yml{% endif %}"
 
         volumes:
             - "zklog:/var/lib/zookeeper/log"
